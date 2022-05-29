@@ -23,6 +23,6 @@ FROM docker.io/alpine:3.15.4
 
 RUN adduser -D app
 
-COPY --from=base  /usr/local/bin/segfaulter /usr/local/bin/
+COPY --from=builder  /usr/local/bin/segfaulter /usr/local/bin/
 
 CMD ["segfaulter"]
