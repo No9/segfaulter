@@ -19,7 +19,7 @@ ENV PATH=/root/.cargo/bin:${PATH}
 RUN cargo build --release && \
   mv ./target/release/segfaulter /usr/local/bin
 
-FROM alpine:alpine:3.15.4
+FROM docker.io/alpine:3.15.4
 
 RUN adduser -D app
 
