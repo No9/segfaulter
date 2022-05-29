@@ -13,6 +13,8 @@ WORKDIR /app
 COPY ./Cargo.toml /app/
 COPY ./src/ /app/src/
 
+ENV PATH=/root/.cargo/bin:${PATH}
+
 RUN cargo build --release && \
   mv ./target/release/segfaulter /usr/local/bin
 
