@@ -51,11 +51,7 @@ jobs:
           username: ${{ secrets.REGISTRY_USER }}
           password: ${{ secrets.REGISTRY_PASSWORD }}
       - name: Build Manifest 
-        uses: redhat-actions/push-to-registry@v2
-        id: manifests 
-        with: 
-          username: ${{ secrets.REGISTRY_USER }}
-          password: ${{ secrets.REGISTRY_PASSWORD }}
+        id: manifests
         run: |
           podman manifest create \
             ${{ env.IMAGE_REGISTRY }}/${{ env.IMAGE_NAMESPACE }}/${{env.IMAGE_NAME}}:${{ env.IMAGE_RELEASE }} \
