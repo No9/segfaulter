@@ -8,7 +8,6 @@ on:
 env:
   IMAGE_NAME: segfaulter-musl
   IMAGE_TAGS: ${{ github.sha }}
-  IMAGE_RELEASE: v0.8.0
   IMAGE_REGISTRY: quay.io
   IMAGE_NAMESPACE: icdh
 
@@ -25,6 +24,9 @@ jobs:
       # Checkout push-to-registry action github repository
       - name: Checkout Push to Registry action
         uses: actions/checkout@v2
+      
+      - id: tag
+        run: echo ::set-output name=TAG::${GITHUB_REF#refs/tags/}
 
       - name: Install qemu dependency
         run: |
@@ -34,8 +36,8 @@ jobs:
         id: build_image
         uses: redhat-actions/buildah-build@main
         with:
-          image: ${{ env.IMAGE_NAME }}-linux-${{ matrix.arch }}
-          tags: ${{ env.IMAGE_TAGS }}
+          image: ${{ env.IMAGE_NAME }}
+          tags: ${{ env.IMAGE_RELEASE }}-linux-${{ matrix.arch }}
           arch: ${{ matrix.arch }}
           build-args: ARCH=${{ matrix.arch }}
           containerfiles: |
@@ -46,7 +48,7 @@ jobs:
         id: push
         with:
           image: ${{ steps.build_image.outputs.image }}
-          tags: ${{ env.IMAGE_RELEASE }}-linux-${{ matrix.arch }}
+          tags: ${{ steps.tag.outputs.TAG }}-linux-${{ matrix.arch }}
           registry: ${{ env.IMAGE_REGISTRY }}/${{ env.IMAGE_NAMESPACE }}
           username: ${{ secrets.REGISTRY_USER }}
           password: ${{ secrets.REGISTRY_PASSWORD }}
@@ -54,10 +56,10 @@ jobs:
         id: manifests
         run: |
           podman manifest create \
-            ${{ env.IMAGE_REGISTRY }}/${{ env.IMAGE_NAMESPACE }}/${{env.IMAGE_NAME}}:${{ env.IMAGE_RELEASE }} \
-            ${{ env.IMAGE_REGISTRY }}/${{ env.IMAGE_NAMESPACE }}/${{env.IMAGE_NAME}}:${{ env.IMAGE_RELEASE }}-linux-amd64 \
-            ${{ env.IMAGE_REGISTRY }}/${{ env.IMAGE_NAMESPACE }}/${{env.IMAGE_NAME}}:${{ env.IMAGE_RELEASE }}-linux-arm64
-      - run: podman manifest push ${{ env.IMAGE_REGISTRY }}/${{ env.IMAGE_NAMESPACE }}/${{env.IMAGE_NAME}}:${{ env.IMAGE_RELEASE }}
+            ${{ env.IMAGE_REGISTRY }}/${{ env.IMAGE_NAMESPACE }}/${{env.IMAGE_NAME}}:${{ steps.tag.outputs.TAG }}  \
+            ${{ env.IMAGE_REGISTRY }}/${{ env.IMAGE_NAMESPACE }}/${{env.IMAGE_NAME}}:${{ steps.tag.outputs.TAG }}-linux-amd64 \
+            ${{ env.IMAGE_REGISTRY }}/${{ env.IMAGE_NAMESPACE }}/${{env.IMAGE_NAME}}:${{ steps.tag.outputs.TAG }}-linux-arm64
+      - run: podman manifest push ${{ env.IMAGE_REGISTRY }}/${{ env.IMAGE_NAMESPACE }}/${{env.IMAGE_NAME}}:${{ steps.tag.outputs.TAG }}
 
       - name: Echo outputs
         run: |
