@@ -46,6 +46,7 @@ jobs:
       - name: Push To Quay
         uses: redhat-actions/push-to-registry@v2
         id: push
+        continue-on-error: true
         with:
           image: ${{ steps.build_image.outputs.image }}
           tags: ${{ steps.tag.outputs.TAG }}-linux-${{ matrix.arch }}
