@@ -37,7 +37,7 @@ jobs:
         uses: redhat-actions/buildah-build@main
         with:
           image: ${{ env.IMAGE_NAME }}
-          tags: ${{ env.IMAGE_RELEASE }}-linux-${{ matrix.arch }}
+          tags: ${{ steps.tag.outputs.TAG }}-linux-${{ matrix.arch }}
           arch: ${{ matrix.arch }}
           build-args: ARCH=${{ matrix.arch }}
           containerfiles: |
