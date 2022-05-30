@@ -59,7 +59,7 @@ jobs:
             ${{ env.IMAGE_REGISTRY }}/${{ env.IMAGE_NAMESPACE }}/${{env.IMAGE_NAME}}:${{ steps.tag.outputs.TAG }}  \
             ${{ env.IMAGE_REGISTRY }}/${{ env.IMAGE_NAMESPACE }}/${{env.IMAGE_NAME}}:${{ steps.tag.outputs.TAG }}-linux-amd64 \
             ${{ env.IMAGE_REGISTRY }}/${{ env.IMAGE_NAMESPACE }}/${{env.IMAGE_NAME}}:${{ steps.tag.outputs.TAG }}-linux-arm64
-      - run: podman manifest push ${{ env.IMAGE_REGISTRY }}/${{ env.IMAGE_NAMESPACE }}/${{env.IMAGE_NAME}}:${{ steps.tag.outputs.TAG }}
+      - run: podman manifest push ${{ env.IMAGE_REGISTRY }}/${{ env.IMAGE_NAMESPACE }}/${{env.IMAGE_NAME}}:${{ steps.tag.outputs.TAG }} docker://${{ env.IMAGE_REGISTRY }}/${{ env.IMAGE_NAMESPACE }}/${{env.IMAGE_NAME}}:${{ steps.tag.outputs.TAG }}
 
       - name: Echo outputs
         run: |
